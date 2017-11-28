@@ -189,11 +189,13 @@ declare	-ix	sum="450"		&lt;==果然出现了!包括有	i	与	x	的宣告!
 declare -ir sum="450" &lt;== 看吧!只剩下 i, r 的类型,不具有	x
 
 #### 变量内容的删除、取代与替换	(Optional)
-
->`#`从头开始删除后面匹配字符（匹配最短）
-`##`从头开始删除后面匹配字符（匹配最长）
-`%`从尾开始删除后面匹配字符（匹配最短）
-`%%`从尾开始删除后面匹配字符（匹配最长）
+* 变量的删除与替换
+>`变量#关键字`从头开始删除后面匹配字符（匹配最短）
+`变量##关键字`从头开始删除后面匹配字符（匹配最长）
+`变量%关键字`从尾开始删除后面匹配字符（匹配最短）
+`变量%%关键字`从尾开始删除后面匹配字符（匹配最长）
+`变量/旧关键字/新关键字`替换第一个匹配的旧关键字
+`变量//旧关键字/新关键字`替换所有匹配的旧关键字
 
 如：
 >jqy@jqy-ThinkPad-T430:~$ path=${PATH}
@@ -203,6 +205,22 @@ jqy@jqy-ThinkPad-T430:~$ echo ${path#/*/sbin:}
 /usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
 jqy@jqy-ThinkPad-T430:~$ echo ${path##/*:}
 /snap/bin
+jqy@jqy-ThinkPad-T430:~$ echo	${path/sbin/SBIN}
+jqy@jqy-ThinkPad-T430:~$ echo	${path//sbin/SBIN}
+
+* 变量的测试与赋值
+
+|变量设置方式|str没有设置|str为空字符|str	已设置非为空字串|
+| ----- | ----- |-----| ----- |
+|var=${str-expr}|var=expr|var=|var=$str|
+|var=${str:-expr}|var=expr|var=expr|var=$str|
+|var=${str+expr}|var=|var=expr|var=expr|
+|var=${str:+expr}|var=|var=|var=expr|
+|var=${str=expr}|str=expr	var=expr|str	不变	var=|str 不变 var=$str|
+|var=${str:=expr}|str=expr	var=expr|str=expr	var=expr|str 不变 var=$str|
+|var=${str?expr}|expr	输出至	stderr|var=|var=$str|
+|var=${str?expr}|expr	输出至	stderr|expr	输出至	stderr|var=$str|
+
 
 
 
