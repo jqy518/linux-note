@@ -255,6 +255,43 @@ PS：我们如果想更改远程登陆系统时显示的欢迎信息，那我们
 如果您想要让使用者登陆后取得一些讯息,例如您想要让大家都知道的讯息,	那么可以将讯息加入`/etc/motd`里面去。
 记得以上修改都要以`root`用户进行修改。
 
+##### bash	的环境配置文件
+
+在进入`bash`进，系统的一些配置文件会被读取，所以我们能用到很多全局变量；下面我们介绍哪些配置文件会被读取及文件的意义，在此之前我们先区分 `login shell`与`non-login shell`;因为两种情况读取的配置文件并不一样。
+>1,login shell:取得bash时需要完整的登陆流程的,就称为loginshell。举例来说,你要由tty1~tty6	登陆,需要输入使用者的帐号与密码,此时取得的	bash	就称为“	login	shell”
+2,non-login	shell:取得bash接口的方法不需要重复登陆的，如：X window登陆Linux后,再以X的图形化接口启动终端机;你在原本的	bash	环境下再次下达	bash这个指令,同样的也没有输入帐号密码,那第二个bash(子程序)也是non-login	shell	
+
+* `login shell`读取的文件：
+
+1，/etc/profile:这是系统整体的设置,最好不要修改这个文件；
+	这个文件主要设置了一些环境变量，及读取一些其他文件，可能包括如下一些：
+
+>`/etc/profile.d/*.sh`;profile.d下的一些.sh文件;如果你需要帮所有使用者设置一些共享的命令别名时,	可以在这个目录下面自行创建扩展名为	.sh	的文件,并将所需要的数据写入即可；
+`/etc/locale.conf`bash	默认使用何种语系的重要配置文件;
+`/usr/share/bash-completion/completions/*`bash自动补全（Tab）功能的一些配置。
+
+2,个人设置文件：
+`~/.bash_profile或~/.bash_login或~/.profile`中的一个以排前的优先，如果存在后面的则不会读取；	login shell才会读；
+
+整个login shell读取配置流程如下:
+
+![loginshell配置](./imgs/10_2.png)
+
+`.~/.bashrc	`(non-login	shell会读)
+此文件设置了一些别名；
+
+##### `source/.`指令
+我们一般对上节的配置文件做了修改后，取要重新进入bash才会生效；我们也可以利用`source`(也可以以`.`代替)指令直接加载配置进来；
+>source	~/.bashrc //与下面指令同效
+. ~/.bashrc
+
+
+
+
+
+
+
+
 
 
 
