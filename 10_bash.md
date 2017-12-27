@@ -333,12 +333,84 @@ Ctrl+d结束;下面输出的两行信息会被写入到myfile.txt中。那我们
 用户当输入`eof`之后当前输入就结束了。
 
 #### 命令执行的判断依据:	;	,	&&,	||
+* `;`不考虑指定的依赖性及相关性，指令之间可以用`;`分隔一次指定多条指定；
+* `&&或||` 我们可以用`&&`或`||`建立起指定的相关性，一条指定执行后会传回一个值`$?`,若`$?=0`则表示指定执行成功。不等于0则表示执行出错。我们可以利用这个回传加上&&或||建立起指定的相关性。
+>`cmd1&&cmd2` 若cmd1成功则执行cmd2；否则不执行。
+`cmd1||cmd2` 若cmd1成功则不执行cmd2;否则执行。
+
+### 管道命令 `|`
+> ls -la /etc | less
+
+上面就是一个简单的管道命令，把ls的输入给后面的less;使用管道命令需要注意两点：
+* 管线命令仅会处理 standard output,对于 standard error output 会予以忽略
+* 管线命令必须要能够接受来自前一个指令的数据成为	standard	input	继续处理才行。
 
 
+#### cut,grep指令：
+撷取讯息通常是针对“一行一行”来分析的,	并不是整篇讯息分析。这点需要注意！
 
+`cut`指令为截取输入变量的一部分。
+>选项与参数:
+-d :后面接分隔字符。与	-f 一起使用;
+-f :依据 -d 的分隔字符将一段讯息分区成为数段,用 -f 取出第几段的意思;
+-c :以字符 (characters) 的单位取出固定字符区间;
 
+例子：
+```bash
+echo ${PATH} | cut -d ':' -f 3,5 
+```
+以`:`分割PATH取出第3,5段。
 
+对于排列整齐的输出,我们可以用`-c`来取出想要的部分。例如：
+```bash
+> export
+输出结果：
+declare -x CLUTTER_IM_MODULE="xim"
+declare -x COMPIZ_BIN_PATH="/usr/bin/"
+declare -x COMPIZ_CONFIG_PROFILE="ubuntu"
+declare -x DBUS_SESSION_BUS_ADDRESS="unix:abstract=/tmp/dbus-l3eKsWwlVw"
+declare -x DEFAULTS_PATH="/usr/share/gconf/ubuntu.default.path"
+declare -x DESKTOP_SESSION="ubuntu"
+declare -x DISPLAY=":0"
+declare -x GDMSESSION="ubuntu"
+declare -x GDM_LANG="zh_CN"
+...
 
+```
+如果我们只想要每行`declare -x`后面的内容；我们可以这样做：
+```bash
+>export | cut -c 12-
+```
+12后面的`-`代表至,如果不写表明到行尾，也可以是`12-20,12-15`等等。
+
+`grep` 指令：
+grep则是分析一行讯息,若当中有我们所需要的信息,就将该行取出来。
+>grep	[-acinv]	[--color=auto]	'搜寻字串'	filename
+选项与参数:
+-a :将 binary 文件以 text 文件的方式搜寻数据
+-c :计算找到 '搜寻字串' 的次数
+-i :忽略大小写的不同,所以大小写视为相同
+-n :顺便输出行号
+-v :反向选择,亦即显示出没有 '搜寻字串' 内容的那一行!
+--color=auto :可以将找到的关键字部分加上颜色的显示喔!
+
+例子：
+`last`指令用于输出登陆历史记录；如：
+```bash
+>last
+输出:
+jqy      tty7         :0               Thu Dec 28 05:48    gone - no logout
+reboot   system boot  4.4.0-98-generic Thu Dec 28 05:48   still running
+reboot   system boot  4.4.0-98-generic Wed Dec 27 13:46 - 13:47  (00:00)
+reboot   system boot  4.4.0-98-generic Mon Dec 25 20:40 - 20:40  (00:00)
+reboot   system boot  4.4.0-98-generic Sat Dec 23 18:14 - 18:15  (00:00)
+...
+```
+我们想取出有用户`jqy`的行,可以如下操作：
+```bash
+>last | grep -n 'jqy'
+```
+### 排序命令:	sort,	wc,	uniq
 
 
 
